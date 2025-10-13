@@ -160,6 +160,7 @@ input::placeholder {
   font-weight: bold;
   border: solid 1px transparent;
   background-color: var(--black);
+  letter-spacing: 1px;
   color: var(--white);
 }
 
