@@ -77,9 +77,17 @@ p {
   font-family: "Montserrat", sans-serif;
   font-size: 32px;
   font-weight: 700;
-  color: var(--black);
   margin-bottom: 60px;
   letter-spacing: -2px;
+}
+
+.logo-login a {
+  color: var(--black);
+  text-decoration: none;
+}
+
+.logo-login a:hover {
+  cursor: pointer;
 }
 
 .login-container h2 {
