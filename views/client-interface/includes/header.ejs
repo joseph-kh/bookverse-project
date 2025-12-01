@@ -19,8 +19,6 @@
             type="button"
             data-bs-toggle="offcanvas"
             data-bs-target="#offcanvasDarkNavbar"
-            aria-controls="offcanvasDarkNavbar"
-            aria-label="Toggle navigation"
           ></i>
 
           <div
@@ -29,11 +27,7 @@
             id="offcanvasDarkNavbar"
           >
             <div class="offcanvas-header">
-              <i
-                class="bi-x-lg"
-                data-bs-dismiss="offcanvas"
-                aria-label="Close"
-              ></i>
+              <i class="bi-x-lg" data-bs-dismiss="offcanvas"></i>
             </div>
             <div class="offcanvas-body">
               <ul class="navbar-nav flex-column gap-4">
@@ -54,7 +48,15 @@
                 </li>
                 <li><a class="nav-item nav-link" href="/cart">Cart</a></li>
                 <li class="nav-item">
-                  <a class="button-1 w-100 text-center" href="/login">Login</a>
+                  <% if (isAuthenticated) { %>
+                  <form action="/auth/logout" method="POST">
+                    <button class="button-1 w-100 text-center">Logout</button>
+                  </form>
+                  <% } else { %>
+                  <a class="button-1 w-100 text-center" href="/auth/login"
+                    >Login</a
+                  >
+                  <% } %>
                 </li>
               </ul>
             </div>
@@ -70,9 +72,6 @@
             type="button"
             data-bs-toggle="collapse"
             data-bs-target="#navbarNav"
-            aria-controls="navbarNav"
-            aria-expanded="false"
-            aria-label="Toggle navigation"
           >
             <span class="navbar-toggler-icon"></span>
           </button>
@@ -86,7 +85,7 @@
               <li><a class="nav-link" href="/b2b">B2B</a></li>
             </ul>
 
-            <!-- logo in center -->
+            <!-- center logo -->
             <a class="navbar-brand mx-auto px-5 logo" href="/"
               ><img src="/assets/logo/logo.png" alt="BookVerse"
             /></a>
@@ -97,14 +96,23 @@
               <li><a class="nav-link" href="/support">Support</a></li>
               <li><a class="nav-link" href="/contact">Contact Us</a></li>
               <li>
-                <a class="nav-link" href="/cart"
-                  ><img
+                <a class="nav-link" href="/cart">
+                  <img
                     src="/assets/svg/cart.svg"
                     class="w-100 mb-1 mr-1"
                     alt="cart"
-                /></a>
+                  />
+                </a>
               </li>
-              <li><a class="button-1" href="/login">Login</a></li>
+              <li>
+                <% if (isAuthenticated) { %>
+                <form action="/auth/logout" method="POST">
+                  <button class="button-1">Logout</button>
+                </form>
+                <% } else { %>
+                <a class="button-1" href="/auth/login">Login</a>
+                <% } %>
+              </li>
             </ul>
           </div>
         </div>
