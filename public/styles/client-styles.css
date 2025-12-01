@@ -1131,6 +1131,34 @@ a:hover {
   line-height: 1.6;
 }
 
+.search-box-mobile {
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.search-box-mobile input {
+  border: none;
+  border-bottom: 2px solid var(--black);
+  background-color: var(--white);
+  padding: 6px 14px;
+  font-size: 14px;
+  flex: 1;
+  border-radius: 0%;
+}
+
+.search-mobile-btn {
+  background-color: var(--black);
+  color: var(--white);
+  border: none;
+  padding: 0 18px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 2%;
+  cursor: pointer;
+}
+
 @media (max-width: 1239px) {
   .grid {
     grid-template-columns: repeat(3, 1fr);
@@ -1211,6 +1239,12 @@ a:hover {
   }
   .price-item2 {
     margin-left: 130px;
+  }
+}
+
+@media (min-width: 768px) {
+  .search-box-mobile {
+    display: none;
   }
 }
 
@@ -1337,6 +1371,9 @@ a:hover {
   .about-us-section2 img {
     width: 90%;
     height: auto;
+  }
+  .search-box {
+    display: none;
   }
 }
 
