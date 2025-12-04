@@ -30,6 +30,7 @@
         <%- include('includes/filters-nav') %>
 
         <section class="items container py-5">
+          <!-- if already filtered -->
           <% if (searchQuery || category || author || price) { %>
           <div style="margin-bottom: 20px;">
             <a href="/top-picks" style="color: var(--lightBrown);">Clear all filters</a>
