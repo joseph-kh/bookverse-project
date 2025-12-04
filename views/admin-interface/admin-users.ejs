@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/x-icon" href="/assets/logo/logo_favicon.png" />
+    <title>USER MANAGEMENT</title>
+
+    <link rel="stylesheet" href="/styles/main.css" />
+    <link rel="stylesheet" href="/styles/admin-main.css" />
+    <link rel="stylesheet" href="/styles/admin-users.css" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Work+Sans:wght@300;400;500&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <%- include('includes/aside-bar') %>
+
+    <main class="main-content">
+      <header class="header">
+        <h2 class="header-title">User Management</h2>
+      </header>
+
+      <% if (errorMessage) { %>
+      <div style="color: red; text-align: center; margin-bottom: 20px;"><%= errorMessage %></div>
+      <% } %>
+
+      <!-- controls -->
+      <div class="controls">
+        <button class="btn-1" id="openAddUserBtn">Add New User</button>
+      </div>
+
+      <!-- Users Table -->
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>User</th>
+              <th>Role</th>
+              <th>Status</th>
+              <th>Joined</th>
+              <th>Orders</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <% users.forEach(user => { %>
+            <tr>
+              <td>
+                <div class="user-cell">
+                  <div class="user-details">
+                    <span class="user-name"><%= user.name %></span>
+                    <span class="user-email"><%= user.email %></span>
+                  </div>
+                </div>
+              </td>
+
+              <td>
+                <span
+                  class="badge <%= user.role === 'Admin' ? 'admin' : 'customer' %>"
+                >
+                  <%= user.role %>
+                </span>
+              </td>
+
+              <td>
+                <span
+                  class="badge <%= user.status === 'Active' ? 'active' : 'inactive' %>"
+                >
+                  <%= user.status %>
+                </span>
+              </td>
+
+              <td><%= new Date(user.joined).toLocaleDateString() %></td>
+              <td><%= user.orders %></td>
+
+              <td>
+                <button
+                  class="btn-small editUserBtn"
+                  data-id="<%= user.id %>"
+                  data-status="<%= user.status %>"
+                >
+                  Edit
+                </button>
+              </td>
+            </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- add user modal -->
+      <div id="userModal" class="modal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3 class="modal-title">Add New User</h3>
+            <button class="close-modal" id="closeAddUserBtn">×</button>
+          </div>
+
+          <form id="addUserForm" action="/admin/users/add" method="POST">
+            <div class="form-group">
+              <label class="form-label">Name</label>
+              <input type="text" class="form-input" name="name" id="addName" required />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Email</label>
+              <input type="email" class="form-input" name="email" id="addEmail" required />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Password</label>
+              <input
+                type="password"
+                class="form-input"
+                name="password"
+                id="addPassword"
+                required
+              />
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Role</label>
+              <select class="form-select" name="role" id="addRole">
+                <option value="Admin">Admin</option>
+                <option value="Customer">Customer</option>
+              </select>
+            </div>
+
+            <div class="form-actions">
+              <button type="button" class="btn-2" id="cancelAddUserBtn">
+                Cancel
+              </button>
+              <button type="submit" class="btn-1">Save User</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- edit user modal -->
+      <div id="editUserModal" class="modal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3 class="modal-title">Edit User Status</h3>
+            <button class="close-modal" id="closeEditUserModal">×</button>
+          </div>
+
+          <form id="editUserForm" action="/admin/users/update-status" method="POST">
+            <input type="hidden" name="id" id="editUserId" />
+
+            <div class="form-group">
+              <label class="form-label">Status</label>
+              <select class="form-select" name="status" id="editStatus">
+                <option value="Active">Active</option>
+                <option value="Inactive">Inactive</option>
+              </select>
+            </div>
+
+            <div class="form-actions">
+              <button type="button" class="btn-2" id="cancelEditUser">
+                Cancel
+              </button>
+              <button type="submit" class="btn-1">Save Status</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </main>
+
+    <script src="/scripts/admin-users.js"></script>
+  </body>
+</html>
