@@ -1,117 +1,71 @@
 import express from "express";
+import session from "express-session";
+import MySQLConnect from "express-mysql-session";
+import { dbConfig } from "./utils/credentials.js";
+import db from "./utils/database.js";
+import authRoutes from "./routes/auth.js";
+import adminRoutes from "./routes/admin.js";
+import clientRoutes from "./routes/client.js";
 
 const app = express();
 
+const MySQLStore = MySQLConnect(session);
+// used to save each session in the database
+const sessionStore = new MySQLStore({
+  // db config from credentials.js has the .env variables through process.env
+  host: dbConfig.host,
+  user: dbConfig.user,
+  password: dbConfig.password,
+  database: dbConfig.database,
+});
+
+app.use(
+  session({
+    secret: "mr_eliot_was_here_12345",
+    resave: false,
+    saveUninitialized: false,
+    name: "session_id_name",
+    store: sessionStore,
+  })
+);
+
+sessionStore
+  .onReady()
+  .then(() => {
+    console.log("MySQLStore ready");
+  })
+  .catch((error) => {
+    console.error(error);
+  });
+
+// - this middleware makes isAuthenticated and errorMessage available in all EJS templates without 
+// passing them explicitly
+// - on every request, set res.locals.isAuthenticated based on req.session.isLoggedIn
+app.use((req, res, next) => {
+  res.locals.isAuthenticated = req.session.isLoggedIn || false;
+  res.locals.errorMessage = null;
+  next();
+});
+
 app.set("view engine", "ejs");
 app.set("views", "views");
-
 app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-app.get("/", (req, res) => {
-  res.render("client-interface/index");
-});
+// this makes the whole app have access to the database connection
+// and in each req we have access to app through req.app
+// so we can do req.app.locals.db to get the connection object
+app.locals.db = db;
 
-app.get("/shop", (req, res) => {
-  const books = [
-    {
-      img: "book.jpeg",
-      href: "item",
-      alt: "101 essays that will change the way you think",
-    },
-    { img: "book1.jpeg", href: "item1", alt: "Metamorphosis" },
-    { img: "book2.jpeg", href: "item2", alt: "The Secret History" },
-    { img: "book4.jpeg", href: "item4", alt: "1984" },
-    { img: "book5.jpeg", href: "item5", alt: "The Republic" },
-    { img: "book6.jpeg", href: "item6", alt: "The Idiot" },
-    { img: "book7.jpeg", href: "item7", alt: "The Anatomy of Dependency" },
-    { img: "book8.jpeg", href: "item8", alt: "The Silent Patient" },
-    { img: "book9.jpeg", href: "item9", alt: "If We Were Villains" },
-  ];
+app.use("/auth", authRoutes);
+app.use("/admin", adminRoutes);
+app.use(clientRoutes);
 
-  res.render("client-interface/shop", { books });
-});
-
-app.get("/top-picks", (req, res) => {
-  const topPicks = [
-    { img: "book10.jpeg", href: "item10", alt: "The Myth of Sisyphus" },
-    { img: "book9.jpeg", href: "item9", alt: "If We Were Villains" },
-    { img: "book8.jpeg", href: "item8", alt: "The Silent Patient" },
-    { img: "book7.jpeg", href: "item7", alt: "The Anatomy of Dependency" },
-    { img: "book6.jpeg", href: "item6", alt: "The Idiot" },
-    { img: "book5.jpeg", href: "item5", alt: "The Republic" },
-  ];
-
-  res.render("client-interface/top-picks", { topPicks });
-});
-
-app.get("/b2b", (req, res) => {
-  res.render("client-interface/b2b");
-});
-
-app.get("/about", (req, res) => {
-  res.render("client-interface/about");
-});
-
-app.get("/support", (req, res) => {
-  res.render("client-interface/support");
-});
-
-app.get("/contact", (req, res) => {
-  res.render("client-interface/contact");
-});
-
-app.get("/cart", (req, res) => {
-  const cartItems = [
-    {
-      img: "book10.jpeg",
-      href: "item10",
-      title: "Albert Camus: The Myth of Sisyphus",
-      price: 7.0,
-      quantity: 1,
-    },
-    {
-      img: "book4.jpeg",
-      href: "item4",
-      title: "George Orwell: 1984",
-      price: 5.0,
-      quantity: 1,
-    },
-  ];
-
-  const favorites = [
-    {
-      img: "book8.jpeg",
-      href: "item8",
-      title: "The Silent Patient",
-      price: 6.0,
-    },
-    {
-      img: "book3.jpeg",
-      href: "item3",
-      title: "Robin",
-      price: 4.0,
-    },
-    {
-      img: "book2.jpeg",
-      href: "item2",
-      title: "The Secret History",
-      price: 7.0,
-    },
-  ];
-
-  res.render("client-interface/cart", { cartItems, favorites });
-});
-
-app.get("/login", (req, res) => {
-  res.render("login-page/login");
-});
-
-app.get("/register", (req, res) => {
-  res.render("login-page/register");
+app.use((req, res) => {
+  res.status(404).render("client-interface/404");
 });
 
 app.listen(8000, "localhost", () =>
-  console.log("server listening on port 8000")
+  console.log("server listening on port 8000: http://localhost:8000")
 );
