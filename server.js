@@ -60,6 +60,7 @@ app.locals.db = db;
 
 app.use("/auth", authRoutes);
 app.use("/admin", adminRoutes);
+// all other routes handled by clientRoutes if matched somewhere there, else 404
 app.use(clientRoutes);
 
 app.use((req, res) => {
